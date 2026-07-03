@@ -1,0 +1,10 @@
+name: esp-swift-nvs
+version: "0.1.0"
+description: "ESP-IDF NVS flash for Swift"
+url: "https://github.com/nixit22/esp-swift-nvs"
+dependencies:
+  idf: ">=5.5"
+  esp-swift-platform:
+    git: "https://github.com/nixit22/esp-swift-platform.git"
+  esp-swift-support:
+    git: "https://github.com/nixit22/esp-swift-support.git"

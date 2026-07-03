@@ -1,0 +1,4 @@
+module ESP_NVS [system] {
+    umbrella header "src/nvs.h"
+    export *
+}
