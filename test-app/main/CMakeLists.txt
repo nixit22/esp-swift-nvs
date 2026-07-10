@@ -25,7 +25,7 @@ idf_component_register(
         "main.swift"
         "TestNVS.swift"
     INCLUDE_DIRS "."
-    REQUIRES esp-swift-nvs esp-swift-platform esp-swift-support
+    REQUIRES esp-swift-nvs
 )
 
 swift_configure(
