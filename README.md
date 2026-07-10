@@ -1,14 +1,8 @@
 # SwiftNVS
 
-SwiftNVS exposes the ESP-IDF NVS (non-volatile storage) flash API to Embedded
-Swift. It re-exports the raw NVS C API through a single `import NVS`, and
-provides `NVS`, a small typed-throws wrapper struct for string key/value access.
+Swift wrapper for ESP-IDF's NVS (non-volatile storage) flash API. Re-exports the raw C API through a single `import NVS`, plus `NVS`, a small typed-throws wrapper for string/`u32`/`u8` key-value access. Swift module name: **`NVS`**.
 
-## Features
-
-- Single `import NVS` exposes `nvs_flash_init`, `nvs_open`, `nvs_get_*`, `nvs_set_*`, `nvs_commit`, `nvs_erase_*`, and all related types / error codes.
-- Pulls in the `nvs_flash` ESP-IDF component transitively, so consumers don't need to declare it themselves.
-- `NVS` wraps a namespace handle with `throws(Error)` get/set/commit methods for strings and `u32`/`u8` values, instead of manual `withCString` + `esp_err_t` checks.
+Depends on: `SwiftPlatform`, `SwiftSupport`, `nvs_flash` (pulled in transitively).
 
 ## Usage
 
@@ -27,6 +21,8 @@ let value = try handle.getString("key")  // nil if absent
 try handle.commit()
 // No explicit cleanup — deinit calls nvs_close.
 ```
+
+See [`CLAUDE.md`](CLAUDE.md) for full API details and non-obvious patterns.
 
 ## License
 
