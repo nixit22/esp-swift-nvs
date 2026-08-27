@@ -34,8 +34,8 @@ public struct NVS: ~Copyable {
     /// - Parameters:
     ///   - namespace: NVS namespace to open.
     ///   - readOnly: Opens read-only when `true`, read-write when `false` (default).
-    /// - Throws: `Platform.Error` if the namespace can't be opened.
-    public init(namespace: String, readOnly: Bool = false) throws(Error) {
+    /// - Throws: `PlatformError` if the namespace can't be opened.
+    public init(namespace: String, readOnly: Bool = false) throws(PlatformError) {
         var h: nvs_handle_t = 0
         let mode: nvs_open_mode_t = readOnly ? NVS_READONLY : NVS_READWRITE
         try namespace.withCString { nvs_open($0, mode, &h) }
@@ -48,8 +48,8 @@ public struct NVS: ~Copyable {
     }
 
     /// Returns the stored string for `key`, or `nil` if the key does not exist.
-    /// - Throws: `Platform.Error` for errors other than "key not found".
-    public func getString(_ key: String) throws(Error) -> String? {
+    /// - Throws: `PlatformError` for errors other than "key not found".
+    public func getString(_ key: String) throws(PlatformError) -> String? {
         var len: size_t = 0
         let lenErr = key.withCString { nvs_get_str(handle, $0, nil, &len) }
         if lenErr == ESP_ERR_NVS_NOT_FOUND { return nil }
@@ -66,22 +66,22 @@ public struct NVS: ~Copyable {
     }
 
     /// Sets `key` to `value` unconditionally.
-    public func setString(_ key: String, _ value: String) throws(Error) {
+    public func setString(_ key: String, _ value: String) throws(PlatformError) {
         try key.withCString { k in value.withCString { v in nvs_set_str(handle, k, v) } }
             .throwEspError { log.w("nvs_set_str(\(key)) failed: \($0.name)") }
     }
 
     /// Sets `key` to `value` only if `key` is not already present.
     /// - Returns: `true` if the value was written, `false` if it already existed.
-    public func setStringIfMissing(_ key: String, _ value: String) throws(Error) -> Bool {
+    public func setStringIfMissing(_ key: String, _ value: String) throws(PlatformError) -> Bool {
         if try getString(key) != nil { return false }
         try setString(key, value)
         return true
     }
 
     /// Returns the stored value for `key`, or `nil` if the key does not exist.
-    /// - Throws: `Platform.Error` for errors other than "key not found".
-    public func getU32(_ key: String) throws(Error) -> UInt32? {
+    /// - Throws: `PlatformError` for errors other than "key not found".
+    public func getU32(_ key: String) throws(PlatformError) -> UInt32? {
         var value: UInt32 = 0
         let err = key.withCString { nvs_get_u32(handle, $0, &value) }
         if err == ESP_ERR_NVS_NOT_FOUND { return nil }
@@ -90,14 +90,14 @@ public struct NVS: ~Copyable {
     }
 
     /// Sets `key` to `value` unconditionally.
-    public func setU32(_ key: String, _ value: UInt32) throws(Error) {
+    public func setU32(_ key: String, _ value: UInt32) throws(PlatformError) {
         try key.withCString { nvs_set_u32(handle, $0, value) }
             .throwEspError { log.w("nvs_set_u32(\(key)) failed: \($0.name)") }
     }
 
     /// Returns the stored value for `key`, or `nil` if the key does not exist.
-    /// - Throws: `Platform.Error` for errors other than "key not found".
-    public func getU8(_ key: String) throws(Error) -> UInt8? {
+    /// - Throws: `PlatformError` for errors other than "key not found".
+    public func getU8(_ key: String) throws(PlatformError) -> UInt8? {
         var value: UInt8 = 0
         let err = key.withCString { nvs_get_u8(handle, $0, &value) }
         if err == ESP_ERR_NVS_NOT_FOUND { return nil }
@@ -106,13 +106,13 @@ public struct NVS: ~Copyable {
     }
 
     /// Sets `key` to `value` unconditionally.
-    public func setU8(_ key: String, _ value: UInt8) throws(Error) {
+    public func setU8(_ key: String, _ value: UInt8) throws(PlatformError) {
         try key.withCString { nvs_set_u8(handle, $0, value) }
             .throwEspError { log.w("nvs_set_u8(\(key)) failed: \($0.name)") }
     }
 
     /// Commits pending writes to flash.
-    public func commit() throws(Error) {
+    public func commit() throws(PlatformError) {
         try nvs_commit(handle).throwEspError { log.w("nvs_commit failed: \($0.name)") }
     }
 }
