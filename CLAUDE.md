@@ -8,9 +8,9 @@ Depends on: `SwiftPlatform`, `SwiftSupport`, `nvs_flash`
 
 | File | Role |
 |---|---|
-| `src/NVS.swift` | `@_exported import ESP_NVS` re-exports the raw C API; also defines `NVS`, a typed-throws wrapper over a single NVS namespace handle |
-| `src/nvs.c` / `src/nvs.h` | Thin C wrapper — only `#include <nvs_flash.h>` |
-| `module.modulemap` | Clang module `ESP_NVS` — umbrella over `src/nvs.h` |
+| `Sources/NVS/NVS.swift` | `@_exported import ESP_NVS` re-exports the raw C API; also defines `NVS`, a typed-throws wrapper over a single NVS namespace handle |
+| `Sources/ESP_NVS/nvs.c` / `include/ESP_NVS.h` | Thin C wrapper — only `#include <nvs_flash.h>` |
+| `Package.swift` | SwiftPM package: C target `ESP_NVS` (module map generated from `include/ESP_NVS.h`) and Swift target `NVS` |
 
 ## Public API
 
@@ -44,4 +44,4 @@ try handle.commit()
 
 **Default partition only** — `NVS.init` always opens via `nvs_open` (default `"nvs"` partition). No consumer in this mono-repo uses a second NVS partition, so `nvs_open_from_partition`/`nvs_flash_init_partition` support was dropped rather than kept as unused, untested plumbing. Re-add if/when a caller actually needs a non-default partition.
 
-**No runtime logic in C glue** — `nvs.c` is empty except for `#include "nvs.h"`. It exists solely so the component has a C compilation unit (required by ESP-IDF component registration).
+**No runtime logic in C glue** — `nvs.c` is empty except for `#include "ESP_NVS.h"`. It exists solely so the `ESP_NVS` target has a C source file (required by SwiftPM).
