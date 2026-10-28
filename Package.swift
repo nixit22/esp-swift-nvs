@@ -31,7 +31,7 @@ let package = Package(
         .library(name: "NVS", targets: ["NVS"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/nixit22/esp-swift-support.git", from: "0.2.0"),
+        .package(url: "https://github.com/nixit22/esp-swift-support.git", from: "0.2.1"),
         .package(url: "https://github.com/nixit22/esp-swift-platform.git", from: "0.1.0"),
     ],
     targets: [
