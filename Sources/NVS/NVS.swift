@@ -47,6 +47,29 @@ public struct NVS: ~Copyable {
         nvs_close(handle)
     }
 
+    /// Initializes the default NVS flash partition. Call once at boot, before opening a namespace
+    /// (or starting Matter, Wi-Fi, ...).
+    ///
+    /// If the partition has no free pages or was written by a newer NVS version, it is **erased**
+    /// and initialized again (all stored data is lost; a warning is logged).
+    ///
+    /// - Throws: `PlatformError` if the initialization (or the erase) fails.
+    public static func initFlash() throws(PlatformError) {
+        var err = nvs_flash_init()
+        if err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND {
+            log.w("NVS partition corrupt or from a newer version — erasing")
+            try nvs_flash_erase().throwEspError { log.e("nvs_flash_erase failed: \($0.name)") }
+            err = nvs_flash_init()
+        }
+        try err.throwEspError { log.e("nvs_flash_init failed: \($0.name)") }
+    }
+
+    /// Erases the default NVS flash partition. It must not be initialized (call before
+    /// `initFlash()`, or after `nvs_flash_deinit()`).
+    public static func eraseFlash() throws(PlatformError) {
+        try nvs_flash_erase().throwEspError { log.e("nvs_flash_erase failed: \($0.name)") }
+    }
+
     /// Returns the stored string for `key`, or `nil` if the key does not exist.
     /// - Throws: `PlatformError` for errors other than "key not found".
     public func getString(_ key: String) throws(PlatformError) -> String? {

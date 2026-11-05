@@ -22,10 +22,10 @@ import NVS
 import Platform
 
 func testNVS(logger: Logger) {
-    let nvsResult = nvs_flash_init()
-    if nvsResult == ESP_OK || nvsResult == ESP_ERR_NVS_NO_FREE_PAGES || nvsResult == ESP_ERR_NVS_NEW_VERSION_FOUND {
+    do {
+        try NVS.initFlash()
         logger.i("NVS: APIs compiled and linked successfully")
-    } else {
-        logger.e("NVS: init failed: \(nvsResult)")
+    } catch {
+        logger.e("NVS: init failed: \(error.name)")
     }
 }
